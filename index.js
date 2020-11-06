@@ -14,7 +14,8 @@ class Wyze {
     this.username = options.username
     this.password = options.password
     this.phoneId = options.phoneId || 'bc151f39-787b-4871-be27-5a20fd0a1937'
-    this.baseUrl = options.baseUrl || 'https://api.wyzecam.com:8443'
+    //this.baseUrl = options.baseUrl || 'https://api.wyzecam.com:8443'
+    this.baseUrl = options.baseUrl || 'https://beta-api.wyzecam.com'
     this.appVer = options.appVer || 'com.hualai.WyzeCam___2.3.69'
     this.sc = '9f275790cab94a72bd206c8876429f3c'
     this.sv = '9d74946e652647e9b6c9d59326aef104'
@@ -179,6 +180,30 @@ class Wyze {
       throw e
     }
     return result.data.data.property_list
+  }
+
+  /**
+  * get device settings
+  * @returns {data.property_list}
+  */
+  async getDeviceSettings(deviceMac, deviceModel) {
+    let result
+    try {
+      await this.getTokens();
+      if (!this.accessToken) {
+        await this.login()
+      }
+      const data = {
+        device_mac: deviceMac,
+        device_model: deviceModel,
+      }
+
+      result = await axios.post(`${this.baseUrl}/app/v2/device_setting/get_list`, await this.getRequestBodyData(data))
+    } catch (e) {
+      console.log('Error...', e)
+      throw e
+    }
+    return result.data.data
   }
 
   /**
